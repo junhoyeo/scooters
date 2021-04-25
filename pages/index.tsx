@@ -1,44 +1,56 @@
+import { Beam } from 'api/beam';
+import { Kickgoing } from 'api/kickgoing';
 import axios from 'axios';
 import React from 'react';
 import styled from 'styled-components';
 
-const headers = {
-  Connection: 'keep-alive',
-  Host: 'api.kickgoing.io',
-  Accept: '*/*',
-  'Accept-Language': 'en-us',
-  'Content-Type': 'application/json',
-  'User-Agent': 'KickGoingApp/4 CFNetwork/1209 Darwin/20.2.0',
-};
-
-type Badge = 'new';
 type Props = {
-  kickscooters: {
-    id: number;
-    serial_number: string;
-    battery_rate: number;
-    lat: number;
-    lng: number;
-    img_url: string;
-    rental_fee_description: string;
-    badges: Badge[];
-    battery_available_minutes: number;
-  }[];
+  kickgoing: Kickgoing.Scooter[];
+  beam: Beam.Scooter[];
 };
 
-const HomePage = ({ kickscooters }: Props) => {
+const HomePage = ({ kickgoing, beam }: Props) => {
   return (
     <Container>
       <Screen>
-        {kickscooters.map((scooter) => (
+        {kickgoing.map((scooter) => (
           <ScooterItem key={scooter.id}>
             <img style={{ width: 86, height: 86 }} src={scooter.img_url} />
             <div style={{ color: 'black' }}>
               <strong>{scooter.serial_number}</strong>
               <br />
-              <span>{scooter.battery_available_minutes}분 이용 가능</span>
+              <span>
+                {scooter.battery_rate}% ({scooter.battery_available_minutes}분
+                이용 가능)
+              </span>
               <br />
               <span>{scooter.rental_fee_description}</span>
+              <br />
+              <span>
+                lat: {scooter.lat}, lng: {scooter.lng}
+              </span>
+            </div>
+          </ScooterItem>
+        ))}
+        {beam.map((scooter) => (
+          <ScooterItem key={scooter.id}>
+            <ScooterImage
+              style={{ width: 86, height: 86 }}
+              src={
+                'https://global-uploads.webflow.com/5b685812f109cf81a7d99e25/5f7f31ba21b8d3de10212aad_beam-saturn.png'
+              }
+            />
+            <div style={{ color: 'black' }}>
+              <strong>{scooter.serialNumber}</strong>
+              <br />
+              <span>{scooter.lastReportedBattery}%</span>
+              <br />
+              <span>잠금해제 300/500 ~ 1,000원 / 분당 90~180원</span>
+              <br />
+              <span>
+                lat: {scooter.bestLocation.coordinates[0]}, lng:{' '}
+                {scooter.bestLocation.coordinates[1]}
+              </span>
             </div>
           </ScooterItem>
         ))}
@@ -70,17 +82,21 @@ const Screen = styled.div`
 const ScooterItem = styled.div`
   display: flex;
   align-items: center;
+  padding: 16px 0;
+`;
+const ScooterImage = styled.img`
+  object-fit: contain;
 `;
 
 export const getServerSideProps = async () => {
-  const { data } = await axios.get(
-    // 'https://api.kickgoing.io/v3/main?latitude=37.47565563033482&longitude=127.15218960299667&version=2.0.2',
-    'https://api.kickgoing.io/v3/kickscooters/ready/list?version=2.0.2&lat=37.50097504002163&lng=127.09176904468205&zoom=17.046608452778308',
-    { headers },
-  );
+  const config = { lat: 37.52725853989131, lng: 127.04061111330559 };
+  const kickgoing = await Kickgoing.getScooters({ ...config, zoom: 17 });
+  const beam = await Beam.getScooters(config);
+
   return {
     props: {
-      kickscooters: data.kickscooters,
+      kickgoing,
+      beam,
     },
   };
 };
