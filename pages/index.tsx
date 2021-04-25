@@ -1,6 +1,6 @@
 import { Beam } from 'api/beam';
 import { Kickgoing } from 'api/kickgoing';
-import axios from 'axios';
+import { ServiceItem } from 'components/ServiceItem';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -13,6 +13,16 @@ const HomePage = ({ kickgoing, beam }: Props) => {
   return (
     <Container>
       <Screen>
+        <Header>
+          <ServiceItem
+            logo="https://play-lh.googleusercontent.com/Eaql1Mg_jbxroQO1pT2QTmx-ehWbaS2LF_HNc6R8t1ium6c87roLg8agOHtDhUFJIA"
+            availableScooters={kickgoing.length}
+          />
+          <ServiceItem
+            logo="https://play-lh.googleusercontent.com/uxdSb9v7M7A_8IzkpbE5juK0yt01WOzMxT163rJq1wnXL27-FLj_yNydCGiYDznOWyU=s360-rw"
+            availableScooters={kickgoing.length}
+          />
+        </Header>
         {kickgoing.map((scooter) => (
           <ScooterItem key={scooter.id}>
             <img style={{ width: 86, height: 86 }} src={scooter.img_url} />
@@ -79,10 +89,16 @@ const Screen = styled.div`
   background-color: #eee;
 `;
 
+const Header = styled.header`
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+`;
+
 const ScooterItem = styled.div`
   display: flex;
   align-items: center;
-  padding: 16px 0;
+  padding: 16px 20px;
 `;
 const ScooterImage = styled.img`
   object-fit: contain;
