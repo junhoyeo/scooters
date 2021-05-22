@@ -77,6 +77,12 @@ const HomePage = ({ scooters }: Props) => {
           ))}
         </Header>
         <Map ref={mapRef} />
+        <BottomModal>
+          <HelmetButton></HelmetButton>
+          <BottomContainer>
+            <strong>Are you moving with somebody else?</strong>
+          </BottomContainer>
+        </BottomModal>
       </Screen>
     </Container>
   );
@@ -131,6 +137,36 @@ const ScooterItem = styled.div`
 `;
 const ScooterImage = styled.img`
   object-fit: contain;
+`;
+
+const BottomModal = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+`;
+const HelmetButton = styled.button`
+  margin-left: auto;
+  margin-right: 16px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  height: 64px;
+  width: 64px;
+  border-radius: 50%;
+  background-image: linear-gradient(to bottom right, #04f9ff, #0150ff);
+  box-shadow: 0px 4px 32px rgba(1, 80, 255, 0.45);
+`;
+const BottomContainer = styled.div`
+  background-color: white;
+  padding: 16px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
 `;
 
 export const getServerSideProps = async () => {
