@@ -1,7 +1,7 @@
 import { Beam } from 'api/beam';
 import { Kickgoing } from 'api/kickgoing';
 import { ServiceItem } from 'components/ServiceItem';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 
 import { Kakao, kakaoMap } from '@/types/kakaoMap';
@@ -22,6 +22,17 @@ declare const kakao: Kakao;
 
 const HomePage = ({ scooters }: Props) => {
   const mapRef = useRef<HTMLDivElement>(null);
+
+  const providers = useMemo(
+    () =>
+      ['kickgoing', 'beam'].map((provider) => ({
+        name: provider,
+        logo: `/images/providers/${provider}.png`,
+        count: scooters.filter((scooter) => scooter.provider === provider)
+          .length,
+      })),
+    [],
+  );
 
   useEffect(() => {
     if (!mapRef.current) {
@@ -61,18 +72,9 @@ const HomePage = ({ scooters }: Props) => {
     <Container>
       <Screen>
         <Header>
-          <ServiceItem
-            logo="/images/providers/kickgoing.png"
-            availableScooters={
-              scooters.filter(({ provider }) => provider === 'kickgoing').length
-            }
-          />
-          <ServiceItem
-            logo="/images/providers/beam.png"
-            availableScooters={
-              scooters.filter(({ provider }) => provider === 'beam').length
-            }
-          />
+          {providers.map(({ name, logo, count }) => (
+            <ServiceItem key={name} logo={logo} availableScooters={count} />
+          ))}
         </Header>
         <Map ref={mapRef} />
       </Screen>
