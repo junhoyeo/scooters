@@ -63,11 +63,11 @@ const HomePage = ({ kickgoing, beam }: Props) => {
       <Screen>
         <Header>
           <ServiceItem
-            logo="https://play-lh.googleusercontent.com/Eaql1Mg_jbxroQO1pT2QTmx-ehWbaS2LF_HNc6R8t1ium6c87roLg8agOHtDhUFJIA"
+            logo="/images/providers/kickgoing.png"
             availableScooters={kickgoing.length}
           />
           <ServiceItem
-            logo="https://play-lh.googleusercontent.com/uxdSb9v7M7A_8IzkpbE5juK0yt01WOzMxT163rJq1wnXL27-FLj_yNydCGiYDznOWyU=s360-rw"
+            logo="/images/providers/beam.png"
             availableScooters={beam.length}
           />
         </Header>
