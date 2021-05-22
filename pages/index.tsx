@@ -105,6 +105,7 @@ const Container = styled.main`
   align-items: center;
   justify-content: center;
   user-select: none;
+  background-color: #87ccc5;
   background-image: url('/images/background-gradient.png');
   background-size: cover;
 `;
