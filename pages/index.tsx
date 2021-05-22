@@ -13,7 +13,12 @@ declare const kakao: any;
 
 const HomePage = ({ kickgoing, beam }: Props) => {
   const map = useMemo(() => {
-    const mapContainer = document.getElementById('map');
+    // undefined when SSR
+    if (typeof window === 'undefined' || !window.document) {
+      return undefined;
+    }
+
+    const mapContainer = window.document.getElementById('map');
     const mapOptions = {
       center: new kakao.maps.LatLng(37.52725853989131, 127.04061111330559),
       level: 4,
@@ -63,7 +68,7 @@ const HomePage = ({ kickgoing, beam }: Props) => {
           />
           <ServiceItem
             logo="https://play-lh.googleusercontent.com/uxdSb9v7M7A_8IzkpbE5juK0yt01WOzMxT163rJq1wnXL27-FLj_yNydCGiYDznOWyU=s360-rw"
-            availableScooters={kickgoing.length}
+            availableScooters={beam.length}
           />
         </Header>
         <Map id="map" />
@@ -156,8 +161,16 @@ const ScooterImage = styled.img`
 
 export const getServerSideProps = async () => {
   const config = { lat: 37.52725853989131, lng: 127.04061111330559 };
-  const kickgoing = await Kickgoing.getScooters({ ...config, zoom: 17 });
-  const beam = await Beam.getScooters(config);
+  const [kickgoing, beam] = await Promise.all([
+    new Promise<Kickgoing.Scooter[]>(async (resolve) => {
+      const scooters = await Kickgoing.getScooters({ ...config, zoom: 17 });
+      resolve(scooters);
+    }),
+    new Promise<Beam.Scooter[]>(async (resolve) => {
+      const scooters = await Beam.getScooters(config);
+      resolve(scooters);
+    }),
+  ]);
 
   return {
     props: {
