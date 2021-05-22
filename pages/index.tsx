@@ -78,7 +78,9 @@ const HomePage = ({ scooters }: Props) => {
         </Header>
         <Map ref={mapRef} />
         <BottomModal>
-          <HelmetButton></HelmetButton>
+          <HelmetButton>
+            <HelmetIcon />
+          </HelmetButton>
           <BottomContainer>
             <BottomContainerQuestion>
               Are you moving with somebody else?
@@ -158,6 +160,7 @@ const BottomModal = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 const HelmetButton = styled.button`
   margin-left: auto;
   margin-right: 16px;
@@ -165,10 +168,22 @@ const HelmetButton = styled.button`
   cursor: pointer;
   height: 64px;
   width: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   background-image: linear-gradient(to bottom right, #04f9ff, #0150ff);
   box-shadow: 0px 4px 32px rgba(1, 80, 255, 0.45);
 `;
+const HelmetIcon = styled.img.attrs({
+  src: '/images/helmet.svg',
+})`
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  margin-bottom: 3.5px;
+`;
+
 const BottomContainer = styled.div`
   background-color: white;
   padding: 16px 16px 32px;
