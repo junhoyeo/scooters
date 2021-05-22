@@ -1,7 +1,7 @@
 import { Beam } from 'api/beam';
 import { Kickgoing } from 'api/kickgoing';
 import { ServiceItem } from 'components/ServiceItem';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
 type Scooter = {
@@ -21,7 +21,7 @@ declare const kakao: any;
 const HomePage = ({ scooters }: Props) => {
   const mapRef = useRef<HTMLDivElement>(null);
 
-  const map = useMemo(() => {
+  useEffect(() => {
     if (!mapRef.current) {
       return undefined;
     }
@@ -34,13 +34,6 @@ const HomePage = ({ scooters }: Props) => {
 
     const map = new kakao.maps.Map(mapContainer, mapOptions);
     console.log('Map Initialized');
-    return map;
-  }, [mapRef]);
-
-  useEffect(() => {
-    if (!map || !scooters.length) {
-      return;
-    }
 
     scooters.forEach((scooter) => {
       const image = new kakao.maps.MarkerImage(
@@ -51,9 +44,8 @@ const HomePage = ({ scooters }: Props) => {
       const marker = new kakao.maps.Marker({ image, position });
       marker.setMap(map);
     });
-
     console.log('Marker Initialized');
-  }, [map, scooters]);
+  }, [mapRef]);
 
   return (
     <Container>
