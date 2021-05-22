@@ -1,5 +1,6 @@
 import { Beam } from 'api/beam';
 import { Kickgoing } from 'api/kickgoing';
+import { BackgroundContainer } from 'components/BackgroundContainer';
 import { ServiceItem } from 'components/ServiceItem';
 import React, { useEffect, useMemo, useRef } from 'react';
 import styled, { css } from 'styled-components';
@@ -69,7 +70,7 @@ const HomePage = ({ scooters }: Props) => {
   }, [mapRef]);
 
   return (
-    <Container>
+    <BackgroundContainer>
       <Screen>
         <Header>
           {providers.map(({ name, logo, count }) => (
@@ -93,24 +94,11 @@ const HomePage = ({ scooters }: Props) => {
           </BottomContainer>
         </BottomModal>
       </Screen>
-    </Container>
+    </BackgroundContainer>
   );
 };
 
 export default HomePage;
-
-const Container = styled.main`
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  background-color: #87ccc5;
-  background-image: url('/images/background-gradient.png');
-  background-size: cover;
-`;
 
 const Screen = styled.div`
   width: 500px;
