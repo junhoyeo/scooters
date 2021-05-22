@@ -2,7 +2,7 @@ import { Beam } from 'api/beam';
 import { Kickgoing } from 'api/kickgoing';
 import { ServiceItem } from 'components/ServiceItem';
 import React, { useEffect, useMemo, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { Kakao, kakaoMap } from '@/types/kakaoMap';
 
@@ -80,7 +80,14 @@ const HomePage = ({ scooters }: Props) => {
         <BottomModal>
           <HelmetButton></HelmetButton>
           <BottomContainer>
-            <strong>Are you moving with somebody else?</strong>
+            <BottomContainerQuestion>
+              Are you moving with somebody else?
+            </BottomContainerQuestion>
+            <FilterContainer>
+              {[...Array(5)].map((_, index) => (
+                <FilterButton selected={index === 0}>{index + 1}</FilterButton>
+              ))}
+            </FilterContainer>
           </BottomContainer>
         </BottomModal>
       </Screen>
@@ -163,10 +170,67 @@ const HelmetButton = styled.button`
 `;
 const BottomContainer = styled.div`
   background-color: white;
-  padding: 16px;
+  padding: 16px 16px 32px;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
+`;
+const BottomContainerQuestion = styled.span`
+  font-size: 1.05rem;
+  font-weight: bold;
+`;
+const FilterContainer = styled.div`
+  display: flex;
+  margin-top: 16px;
+`;
+
+type FilterButtonProps = {
+  selected?: boolean;
+};
+const FilterButton = styled.span<FilterButtonProps>`
+  margin-right: 4px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #dee2e6;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  ${({ selected }) =>
+    !selected
+      ? css`
+          background-color: #dee2e6;
+          color: #495057;
+
+          &:hover {
+            background-color: #ced4da;
+            color: #343a40;
+          }
+        `
+      : css`
+          background-image: linear-gradient(
+            to bottom right,
+            #03c1ff,
+            #049cff,
+            #0150ff
+          );
+          color: rgba(255, 255, 255, 0.9);
+
+          &:hover {
+            background-image: linear-gradient(
+              to bottom right,
+              #00d0ff,
+              #007bff,
+              #0033ff
+            );
+            color: white;
+          }
+        `};
 `;
 
 export const getServerSideProps = async () => {
