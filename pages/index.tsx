@@ -91,8 +91,9 @@ const Container = styled.main`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: white;
   user-select: none;
+  background-image: url('/images/background-gradient.png');
+  background-size: cover;
 `;
 
 const Screen = styled.div`
