@@ -72,47 +72,6 @@ const HomePage = ({ kickgoing, beam }: Props) => {
           />
         </Header>
         <Map id="map" />
-        {kickgoing.map((scooter) => (
-          <ScooterItem key={scooter.id}>
-            <img style={{ width: 86, height: 86 }} src={scooter.img_url} />
-            <div style={{ color: 'black' }}>
-              <strong>{scooter.serial_number}</strong>
-              <br />
-              <span>
-                {scooter.battery_rate}% ({scooter.battery_available_minutes}분
-                이용 가능)
-              </span>
-              <br />
-              <span>{scooter.rental_fee_description}</span>
-              <br />
-              <span>
-                lat: {scooter.lat}, lng: {scooter.lng}
-              </span>
-            </div>
-          </ScooterItem>
-        ))}
-        {beam.map((scooter) => (
-          <ScooterItem key={scooter.id}>
-            <ScooterImage
-              style={{ width: 86, height: 86 }}
-              src={
-                'https://global-uploads.webflow.com/5b685812f109cf81a7d99e25/5f7f31ba21b8d3de10212aad_beam-saturn.png'
-              }
-            />
-            <div style={{ color: 'black' }}>
-              <strong>{scooter.serialNumber}</strong>
-              <br />
-              <span>{scooter.lastReportedBattery}%</span>
-              <br />
-              <span>잠금해제 300/500 ~ 1,000원 / 분당 90~180원</span>
-              <br />
-              <span>
-                lat: {scooter.bestLocation.coordinates[0]}, lng:{' '}
-                {scooter.bestLocation.coordinates[1]}
-              </span>
-            </div>
-          </ScooterItem>
-        ))}
       </Screen>
     </Container>
   );
