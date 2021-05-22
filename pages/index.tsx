@@ -1,7 +1,7 @@
 import { Beam } from 'api/beam';
 import { Kickgoing } from 'api/kickgoing';
 import { ServiceItem } from 'components/ServiceItem';
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
 type Props = {
@@ -9,7 +9,50 @@ type Props = {
   beam: Beam.Scooter[];
 };
 
+declare const kakao: any;
+
 const HomePage = ({ kickgoing, beam }: Props) => {
+  const map = useMemo(() => {
+    const mapContainer = document.getElementById('map');
+    const mapOptions = {
+      center: new kakao.maps.LatLng(37.52725853989131, 127.04061111330559),
+      level: 4,
+    };
+
+    const map = new kakao.maps.Map(mapContainer, mapOptions);
+    return map;
+  }, []);
+
+  // TODO: move this logic to server
+  const scooters = useMemo(() => {
+    return [
+      ...kickgoing.map((scooter) => ({
+        identifier: scooter.id,
+        lat: scooter.lat,
+        lng: scooter.lng,
+        provider: 'kickgoing',
+      })),
+      ...beam.map((scooter) => ({
+        identifier: scooter.id,
+        lat: scooter.bestLocation.coordinates[0],
+        lng: scooter.bestLocation.coordinates[1],
+        provider: 'beam',
+      })),
+    ];
+  }, [kickgoing, beam]);
+
+  useEffect(() => {
+    if (!map || !scooters.length) {
+      return;
+    }
+
+    scooters.forEach((scooter) => {
+      const position = new kakao.maps.LatLng(scooter.lat, scooter.lng);
+      const marker = new kakao.maps.Marker({ position });
+      marker.setMap(map);
+    });
+  }, [map, scooters]);
+
   return (
     <Container>
       <Screen>
@@ -23,6 +66,7 @@ const HomePage = ({ kickgoing, beam }: Props) => {
             availableScooters={kickgoing.length}
           />
         </Header>
+        <Map id="map" />
         {kickgoing.map((scooter) => (
           <ScooterItem key={scooter.id}>
             <img style={{ width: 86, height: 86 }} src={scooter.img_url} />
@@ -93,6 +137,12 @@ const Header = styled.header`
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
+`;
+
+const Map = styled.div`
+  width: 100%;
+  height: 600px;
+  background-color: #e3e3e3;
 `;
 
 const ScooterItem = styled.div`
