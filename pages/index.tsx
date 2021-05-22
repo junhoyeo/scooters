@@ -4,14 +4,21 @@ import { ServiceItem } from 'components/ServiceItem';
 import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 
+type Scooter = {
+  identifier: string;
+  lat: number;
+  lng: number;
+  provider: 'kickgoing' | 'beam';
+  distance?: number;
+};
+
 type Props = {
-  kickgoing: Kickgoing.Scooter[];
-  beam: Beam.Scooter[];
+  scooters: Scooter[];
 };
 
 declare const kakao: any;
 
-const HomePage = ({ kickgoing, beam }: Props) => {
+const HomePage = ({ scooters }: Props) => {
   const map = useMemo(() => {
     // undefined when SSR
     if (typeof window === 'undefined' || !window.document) {
@@ -25,26 +32,9 @@ const HomePage = ({ kickgoing, beam }: Props) => {
     };
 
     const map = new kakao.maps.Map(mapContainer, mapOptions);
+    console.log('Map Initialized');
     return map;
   }, []);
-
-  // TODO: move this logic to server
-  const scooters = useMemo(() => {
-    return [
-      ...kickgoing.map((scooter) => ({
-        identifier: scooter.id,
-        lat: scooter.lat,
-        lng: scooter.lng,
-        provider: 'kickgoing',
-      })),
-      ...beam.map((scooter) => ({
-        identifier: scooter.id,
-        lat: scooter.bestLocation.coordinates[0],
-        lng: scooter.bestLocation.coordinates[1],
-        provider: 'beam',
-      })),
-    ];
-  }, [kickgoing, beam]);
 
   useEffect(() => {
     if (!map || !scooters.length) {
@@ -52,10 +42,16 @@ const HomePage = ({ kickgoing, beam }: Props) => {
     }
 
     scooters.forEach((scooter) => {
+      const image = new kakao.maps.MarkerImage(
+        `/images/providers/${scooter.provider}.png`,
+        new kakao.maps.Size(24, 24),
+      );
       const position = new kakao.maps.LatLng(scooter.lat, scooter.lng);
-      const marker = new kakao.maps.Marker({ position });
+      const marker = new kakao.maps.Marker({ image, position });
       marker.setMap(map);
     });
+
+    console.log('Marker Initialized');
   }, [map, scooters]);
 
   return (
@@ -64,11 +60,15 @@ const HomePage = ({ kickgoing, beam }: Props) => {
         <Header>
           <ServiceItem
             logo="/images/providers/kickgoing.png"
-            availableScooters={kickgoing.length}
+            availableScooters={
+              scooters.filter(({ provider }) => provider === 'kickgoing').length
+            }
           />
           <ServiceItem
             logo="/images/providers/beam.png"
-            availableScooters={beam.length}
+            availableScooters={
+              scooters.filter(({ provider }) => provider === 'beam').length
+            }
           />
         </Header>
         <Map id="map" />
@@ -121,20 +121,56 @@ const ScooterImage = styled.img`
 export const getServerSideProps = async () => {
   const config = { lat: 37.52725853989131, lng: 127.04061111330559 };
   const [kickgoing, beam] = await Promise.all([
-    new Promise<Kickgoing.Scooter[]>(async (resolve) => {
-      const scooters = await Kickgoing.getScooters({ ...config, zoom: 17 });
+    new Promise<Scooter[]>(async (resolve) => {
+      let scooters = await Kickgoing.getScooters({ ...config, zoom: 17 });
+      scooters = scooters.slice(0, 500);
+      scooters = scooters.map((scooter: Kickgoing.Scooter) => ({
+        identifier: scooter.id,
+        lat: scooter.lat,
+        lng: scooter.lng,
+        provider: 'kickgoing',
+        distance: getDistance(config.lat, config.lng, scooter.lat, scooter.lng),
+      }));
       resolve(scooters);
     }),
-    new Promise<Beam.Scooter[]>(async (resolve) => {
-      const scooters = await Beam.getScooters(config);
+    new Promise<Scooter[]>(async (resolve) => {
+      let scooters = await Beam.getScooters(config);
+      scooters = scooters.slice(0, 500);
+      scooters = scooters.map((scooter: Beam.Scooter) => {
+        // NOTE: coordinates are out of order here
+        const [lng, lat] = scooter.bestLocation.coordinates;
+        return {
+          identifier: scooter.id,
+          lat,
+          lng,
+          provider: 'beam',
+          distance: getDistance(config.lat, config.lng, lat, lng),
+        };
+      });
       resolve(scooters);
     }),
   ]);
+  let scooters = [...kickgoing, ...beam];
+  scooters.sort((a: Scooter, b: Scooter) => a.distance - b.distance);
+  scooters = scooters.slice(0, 200);
 
   return {
     props: {
-      kickgoing,
-      beam,
+      scooters,
     },
   };
 };
+
+function getDistance(lat1: number, lng1: number, lat2: number, lng2: number) {
+  const radlat1 = (Math.PI * lat1) / 180;
+  const radlat2 = (Math.PI * lat2) / 180;
+  const theta = lng1 - lng2;
+  const radtheta = (Math.PI * theta) / 180;
+  let dist =
+    Math.sin(radlat1) * Math.sin(radlat2) +
+    Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+  dist = Math.acos(dist);
+  dist = (dist * 180) / Math.PI;
+  dist = dist * 60 * 1.1515;
+  return dist;
+}
