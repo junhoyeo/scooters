@@ -91,7 +91,7 @@ const Container = styled.main`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #d3d3d3;
+  background-color: white;
   user-select: none;
 `;
 
@@ -100,16 +100,26 @@ const Screen = styled.div`
   height: 100%;
   flex: 1;
   background-color: #eee;
+  position: relative;
 `;
 
 const Header = styled.header`
   padding: 16px 20px;
   display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  background-color: white;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
 `;
 
 const Map = styled.div`
   width: 100%;
-  height: 600px;
+  height: 100vh;
   background-color: #e3e3e3;
 `;
 
