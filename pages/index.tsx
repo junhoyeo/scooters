@@ -1,7 +1,7 @@
 import { Beam } from 'api/beam';
 import { Kickgoing } from 'api/kickgoing';
 import { ServiceItem } from 'components/ServiceItem';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 
 type Scooter = {
@@ -19,13 +19,14 @@ type Props = {
 declare const kakao: any;
 
 const HomePage = ({ scooters }: Props) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+
   const map = useMemo(() => {
-    // undefined when SSR
-    if (typeof window === 'undefined' || !window.document) {
+    if (!mapRef.current) {
       return undefined;
     }
 
-    const mapContainer = window.document.getElementById('map');
+    const mapContainer = mapRef.current;
     const mapOptions = {
       center: new kakao.maps.LatLng(37.52725853989131, 127.04061111330559),
       level: 4,
@@ -34,7 +35,7 @@ const HomePage = ({ scooters }: Props) => {
     const map = new kakao.maps.Map(mapContainer, mapOptions);
     console.log('Map Initialized');
     return map;
-  }, []);
+  }, [mapRef]);
 
   useEffect(() => {
     if (!map || !scooters.length) {
@@ -71,7 +72,7 @@ const HomePage = ({ scooters }: Props) => {
             }
           />
         </Header>
-        <Map id="map" />
+        <Map ref={mapRef} />
       </Screen>
     </Container>
   );
