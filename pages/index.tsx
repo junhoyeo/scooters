@@ -4,6 +4,8 @@ import { ServiceItem } from 'components/ServiceItem';
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
+import { Kakao, kakaoMap } from '@/types/kakaoMap';
+
 type Scooter = {
   identifier: string;
   lat: number;
@@ -16,7 +18,7 @@ type Props = {
   scooters: Scooter[];
 };
 
-declare const kakao: any;
+declare const kakao: Kakao;
 
 const HomePage = ({ scooters }: Props) => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -26,7 +28,7 @@ const HomePage = ({ scooters }: Props) => {
       return;
     }
 
-    let map;
+    let map: kakaoMap.maps.Map;
 
     const initializeMap = () => {
       const mapContainer = mapRef.current;
