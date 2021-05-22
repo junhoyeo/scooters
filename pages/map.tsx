@@ -101,7 +101,8 @@ const HomePage = ({ scooters }: Props) => {
 export default HomePage;
 
 const Screen = styled.div`
-  width: 500px;
+  max-width: 500px;
+  width: 100%;
   height: 100%;
   flex: 1;
   background-color: #eee;
