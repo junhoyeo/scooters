@@ -23,27 +23,35 @@ const HomePage = ({ scooters }: Props) => {
 
   useEffect(() => {
     if (!mapRef.current) {
-      return undefined;
+      return;
     }
 
-    const mapContainer = mapRef.current;
-    const mapOptions = {
-      center: new kakao.maps.LatLng(37.52725853989131, 127.04061111330559),
-      level: 4,
+    let map;
+
+    const initializeMap = () => {
+      const mapContainer = mapRef.current;
+      const mapOptions = {
+        center: new kakao.maps.LatLng(37.52725853989131, 127.04061111330559),
+        level: 4,
+      };
+      map = new kakao.maps.Map(mapContainer, mapOptions);
     };
 
-    const map = new kakao.maps.Map(mapContainer, mapOptions);
-    console.log('Map Initialized');
+    const initializeMarkers = () => {
+      scooters.forEach((scooter) => {
+        const image = new kakao.maps.MarkerImage(
+          `/images/providers/${scooter.provider}.png`,
+          new kakao.maps.Size(24, 24),
+        );
+        const position = new kakao.maps.LatLng(scooter.lat, scooter.lng);
+        const marker = new kakao.maps.Marker({ image, position });
+        marker.setMap(map);
+      });
+    };
 
-    scooters.forEach((scooter) => {
-      const image = new kakao.maps.MarkerImage(
-        `/images/providers/${scooter.provider}.png`,
-        new kakao.maps.Size(24, 24),
-      );
-      const position = new kakao.maps.LatLng(scooter.lat, scooter.lng);
-      const marker = new kakao.maps.Marker({ image, position });
-      marker.setMap(map);
-    });
+    initializeMap();
+    console.log('Map Initialized');
+    initializeMarkers();
     console.log('Marker Initialized');
   }, [mapRef]);
 
