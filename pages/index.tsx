@@ -16,6 +16,7 @@ const LandingPage = () => {
       <Link href="/map">
         <Button>Start Now</Button>
       </Link>
+      <ScooterIllust />
     </BackgroundContainer>
   );
 };
@@ -53,4 +54,11 @@ const Button = styled.button`
     background-color: #03bcff;
     transform: scale(1.05);
   }
+`;
+
+const ScooterIllust = styled.img.attrs({
+  src: '/images/scooter.svg',
+})`
+  max-width: 100%;
+  object-fit: contain;
 `;
