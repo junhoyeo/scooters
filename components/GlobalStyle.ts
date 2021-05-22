@@ -21,8 +21,9 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     margin: 0;
-    font-family: -apple-system, system-ui, BlinkMacSystemFont,
+    font-family: 'Inter', -apple-system, system-ui, BlinkMacSystemFont,
       'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: -0.32px;
   }
 
   a {
