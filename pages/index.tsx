@@ -105,7 +105,6 @@ const Screen = styled.div`
 const Header = styled.header`
   padding: 16px 20px;
   display: flex;
-  flex-direction: column;
 `;
 
 const Map = styled.div`
